@@ -56,7 +56,7 @@ namespace Yarn.Markup
         /// </summary>
         /// <param name="text">The plain text.</param>
         /// <param name="attributes">The list of attributes.</param>
-        internal MarkupParseResult(string text, List<MarkupAttribute> attributes)
+        public MarkupParseResult(string text, List<MarkupAttribute> attributes)
         {
             this.Text = text;
             this.Attributes = attributes;
@@ -122,7 +122,9 @@ namespace Yarn.Markup
 
             if (this.Text.Length < attribute.Position + attribute.Length)
             {
-                throw new System.ArgumentOutOfRangeException($"Attribute represents a range not representable by this text. Does this {nameof(MarkupAttribute)} belong to this {nameof(MarkupParseResult)}?");
+                throw new System.ArgumentOutOfRangeException(
+                    $"Attribute represents a range not representable by this text. Does this {nameof(MarkupAttribute)} belong to this {nameof(MarkupParseResult)}?"
+                );
             }
 
             return this.Text.Substring(attribute.Position, attribute.Length);
@@ -207,7 +209,10 @@ namespace Yarn.Markup
             var deletionStart = attributeToDelete.Position;
             var deletionEnd = attributeToDelete.Position + attributeToDelete.Length;
 
-            var editedSubstring = this.Text.Remove(attributeToDelete.Position, attributeToDelete.Length);
+            var editedSubstring = this.Text.Remove(
+                attributeToDelete.Position,
+                attributeToDelete.Length
+            );
 
             foreach (var existingAttribute in this.Attributes)
             {
@@ -320,7 +325,13 @@ namespace Yarn.Markup
         /// <param name="name">The name of the attribute.</param>
         /// <param name="properties">The properties associated with this
         /// attribute.</param>
-        internal MarkupAttribute(int position, int sourcePosition, int length, string name, IEnumerable<MarkupProperty> properties)
+        public MarkupAttribute(
+            int position,
+            int sourcePosition,
+            int length,
+            string name,
+            IEnumerable<MarkupProperty> properties
+        )
         {
             this.Position = position;
             this.SourcePosition = sourcePosition;
@@ -346,10 +357,14 @@ namespace Yarn.Markup
         /// start of this attribute.</param>
         /// <param name="length">The number of text elements in the plain
         /// text that this attribute covers.</param>
-        internal MarkupAttribute(MarkupAttributeMarker openingMarker, int length)
-        : this(openingMarker.Position, openingMarker.SourcePosition, length, openingMarker.Name, openingMarker.Properties)
-        {
-        }
+        public MarkupAttribute(MarkupAttributeMarker openingMarker, int length)
+            : this(
+                openingMarker.Position,
+                openingMarker.SourcePosition,
+                length,
+                openingMarker.Name,
+                openingMarker.Properties
+            ) { }
 
         /// <summary>
         /// Gets the position in the plain text where
@@ -378,13 +393,15 @@ namespace Yarn.Markup
         /// Gets the position in the original source text where this
         /// attribute begins.
         /// </summary>
-        internal int SourcePosition { get; private set; }
+        public int SourcePosition { get; private set; }
 
         /// <inheritdoc/>
         public override string ToString()
         {
             var sb = new System.Text.StringBuilder();
-            sb.Append($"[{this.Name}] - {this.Position}-{this.Position + this.Length} ({this.Length}");
+            sb.Append(
+                $"[{this.Name}] - {this.Position}-{this.Position + this.Length} ({this.Length}"
+            );
 
             if (this.Properties?.Count > 0)
             {
@@ -416,7 +433,7 @@ namespace Yarn.Markup
         /// </summary>
         /// <param name="name">The name of the property.</param>
         /// <param name="value">The value of the property.</param>
-        internal MarkupProperty(string name, MarkupValue value)
+        public MarkupProperty(string name, MarkupValue value)
         {
             this.Name = name;
             this.Value = value;
@@ -450,21 +467,21 @@ namespace Yarn.Markup
         /// This property is only defined when the property's <see
         /// cref="Type"/> is <see cref="MarkupValueType.Integer"/>.
         /// </remarks>
-        public int IntegerValue { get; internal set; }
+        public int IntegerValue { get; set; }
 
         /// <summary>Gets the float value of this property.</summary>
         /// /// <remarks>
         /// This property is only defined when the property's <see
         /// cref="Type"/> is <see cref="MarkupValueType.Float"/>.
         /// </remarks>
-        public float FloatValue { get; internal set; }
+        public float FloatValue { get; set; }
 
         /// <summary>Gets the string value of this property.</summary>
         /// <remarks>
         /// This property is only defined when the property's <see
         /// cref="Type"/> is <see cref="MarkupValueType.String"/>.
         /// </remarks>
-        public string StringValue { get; internal set; }
+        public string StringValue { get; set; }
 
         // Disable style warning "Summary should begin "Gets a value
         // indicating..." for this property, because that's not what this
@@ -475,13 +492,13 @@ namespace Yarn.Markup
         /// This property is only defined when the property's <see
         /// cref="Type"/> is <see cref="MarkupValueType.Bool"/>.
         /// </remarks>
-        public bool BoolValue { get; internal set; }
+        public bool BoolValue { get; set; }
 #pragma warning restore SA1623
 
         /// <summary>
         /// Gets the value's type.
         /// </summary>
-        public MarkupValueType Type { get; internal set; }
+        public MarkupValueType Type { get; set; }
 
         /// <inheritdoc/>
         public override string ToString()
@@ -497,7 +514,9 @@ namespace Yarn.Markup
                 case MarkupValueType.Bool:
                     return this.BoolValue.ToString();
                 default:
-                    throw new System.InvalidOperationException($"Invalid markup value type {this.Type}");
+                    throw new System.InvalidOperationException(
+                        $"Invalid markup value type {this.Type}"
+                    );
             }
         }
     }
@@ -522,7 +541,13 @@ namespace Yarn.Markup
         /// <param name="sourcePosition">The position of the marker in the original text.</param>
         /// <param name="properties">The properties of the marker.</param>
         /// <param name="type">The type of the marker.</param>
-        internal MarkupAttributeMarker(string name, int position, int sourcePosition, List<MarkupProperty> properties, TagType type)
+        internal MarkupAttributeMarker(
+            string name,
+            int position,
+            int sourcePosition,
+            List<MarkupProperty> properties,
+            TagType type
+        )
         {
             this.Name = name;
             this.Position = position;
