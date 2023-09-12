@@ -27,7 +27,7 @@ SOFTWARE.
 namespace Yarn.Markup
 {
     using System.Collections.Generic;
-    using System.Runtime.InteropServices;
+    using System.Globalization;
 
 #pragma warning disable CA1815
     /// <summary>
@@ -340,9 +340,12 @@ namespace Yarn.Markup
 
             var props = new Dictionary<string, MarkupValue>();
 
-            foreach (var prop in properties)
+            if (properties != null)
             {
-                props.Add(prop.Name, prop.Value);
+                foreach (var prop in properties)
+                {
+                    props.Add(prop.Name, prop.Value);
+                }
             }
 
             this.Properties = props;
@@ -364,7 +367,8 @@ namespace Yarn.Markup
                 length,
                 openingMarker.Name,
                 openingMarker.Properties
-            ) { }
+            )
+        { }
 
         /// <summary>
         /// Gets the position in the plain text where
@@ -486,14 +490,12 @@ namespace Yarn.Markup
         // Disable style warning "Summary should begin "Gets a value
         // indicating..." for this property, because that's not what this
         // bool property represents
-#pragma warning disable SA1623
         /// <summary>Gets the bool value of this property.</summary>
         /// <remarks>
         /// This property is only defined when the property's <see
         /// cref="Type"/> is <see cref="MarkupValueType.Bool"/>.
         /// </remarks>
         public bool BoolValue { get; set; }
-#pragma warning restore SA1623
 
         /// <summary>
         /// Gets the value's type.
@@ -506,22 +508,21 @@ namespace Yarn.Markup
             switch (this.Type)
             {
                 case MarkupValueType.Integer:
-                    return this.IntegerValue.ToString();
+                    return this.IntegerValue.ToString(CultureInfo.InvariantCulture);
                 case MarkupValueType.Float:
-                    return this.FloatValue.ToString();
+                    return this.FloatValue.ToString(CultureInfo.InvariantCulture);
                 case MarkupValueType.String:
                     return this.StringValue;
                 case MarkupValueType.Bool:
                     return this.BoolValue.ToString();
                 default:
-                    throw new System.InvalidOperationException(
-                        $"Invalid markup value type {this.Type}"
-                    );
+                    return "Invalid markup value type {this.Type}";
             }
         }
     }
 #pragma warning restore CA1815
 
+#pragma warning disable CA1815
     /// <summary>
     /// Represents a marker (e.g. <c>[a]</c>) in line of marked up text.
     /// </summary>
@@ -530,7 +531,7 @@ namespace Yarn.Markup
     /// by objects that can parse markup, such as <see cref="Dialogue"/>.
     /// </remarks>
     /// <seealso cref="Dialogue.ParseMarkup(string)"/>
-    internal struct MarkupAttributeMarker
+    public struct MarkupAttributeMarker
     {
         /// <summary>
         /// Initializes a new instance of the <see
@@ -541,7 +542,7 @@ namespace Yarn.Markup
         /// <param name="sourcePosition">The position of the marker in the original text.</param>
         /// <param name="properties">The properties of the marker.</param>
         /// <param name="type">The type of the marker.</param>
-        internal MarkupAttributeMarker(
+        public MarkupAttributeMarker(
             string name,
             int position,
             int sourcePosition,
@@ -612,4 +613,5 @@ namespace Yarn.Markup
             return false;
         }
     }
+#pragma warning restore CA1815
 }
