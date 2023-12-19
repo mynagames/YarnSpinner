@@ -8,7 +8,7 @@ namespace Yarn
     using System.Runtime.Serialization;
     using System.Globalization;
     using static Yarn.Instruction.Types;
-    
+
     /// <summary>
     /// A compiled Yarn program.
     /// </summary>
@@ -59,20 +59,20 @@ namespace Yarn
 
         // TODO: this behaviour belongs in the VM as a "load additional program" feature, not in the Program data object
 
-		/// <summary>
-		/// Creates a new Program by merging multiple Programs together.
-		/// </summary>
-		/// <remarks>
-		/// The new program will contain every node from every input
-		/// program.
-		/// </remarks>
-		/// <param name="programs">The Programs to combine
-		/// together.</param>
-		/// <returns>The new, combined program.</returns>
-		/// <throws cref="ArgumentException">Thrown when no Programs are
-		/// provided as parameters.</throws>
-		/// <throws cref="InvalidOperationException">Thrown when more than
-		/// one Program contains a node of the same name.</throws>
+        /// <summary>
+        /// Creates a new Program by merging multiple Programs together.
+        /// </summary>
+        /// <remarks>
+        /// The new program will contain every node from every input
+        /// program.
+        /// </remarks>
+        /// <param name="programs">The Programs to combine
+        /// together.</param>
+        /// <returns>The new, combined program.</returns>
+        /// <throws cref="ArgumentException">Thrown when no Programs are
+        /// provided as parameters.</throws>
+        /// <throws cref="InvalidOperationException">Thrown when more than
+        /// one Program contains a node of the same name.</throws>
         public static Program Combine(params Program[] programs)
         {
             if (programs == null)
@@ -215,6 +215,13 @@ namespace Yarn
     /// </summary>
     public partial class Node
     {
+        #region Myna
 
+        /// <summary>
+        /// The number of <see cref="Instruction"/>s contained in the <see cref="Node"/>.
+        /// </summary>
+        public int NumInstructions => Instructions != null ? Instructions.Count : 0;
+        
+        #endregion Myna
     }
 }

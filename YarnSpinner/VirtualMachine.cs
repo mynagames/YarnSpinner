@@ -222,6 +222,18 @@ namespace Yarn
             }
         }
 
+        #region Myna
+        
+        public int ProgramCounter
+        {
+            get => state.programCounter;
+            set => state.programCounter = value;
+        }
+
+        public Node CurrentNode => currentNode;
+
+        #endregion Myna
+
         public enum ExecutionState
         {
             /// <summary>
