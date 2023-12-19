@@ -768,7 +768,6 @@ namespace Yarn
         }
 
         #region Myna
-
         /// <summary>
         /// Starts, or continues, execution of the current Program from the specified <see cref="Instruction"/> index.
         /// </summary>
@@ -807,7 +806,7 @@ namespace Yarn
         /// Starts, or continues, execution of the current Program from the specified <see cref="Instruction"/>.
         /// </summary>
         /// <param name="instruction">The <see cref="Instruction"/> to continue from.</param>
-        /// /// <param name="error">An error message to output if the method failed to complete.</param>
+        /// <param name="error">An error message to output if the method failed to complete.</param>
         public bool TryContinueFrom(Instruction instruction, out string error)
         {
             var node = vm.CurrentNode;
@@ -827,7 +826,6 @@ namespace Yarn
             int instructionIndex = instructions.IndexOf(instruction);
             return TryContinueFrom(instructionIndex, out error);
         }
-
         #endregion Myna
 
         /// <summary>
