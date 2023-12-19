@@ -677,6 +677,20 @@ namespace Yarn
             this.vm.SetNode(startNode);
         }
 
+        #region Myna
+        /// <summary>
+        /// Set the regex pattern of 
+        /// <see cref="LineParser.endOfCharacterMarkerOverride"/>. This 
+        /// pattern will be used to parse the character name attribute 
+        /// from a line of text instead of the default pattern.
+        /// </summary>
+        /// <param name="pattern">The regex pattern to use.</param>
+        public void SetEndOfCharacterMarker(string pattern)
+        {
+            this.lineParser.SetEndOfCharacterMarker(pattern);
+        }
+        #endregion Myna
+
         /// <summary>
         /// Signals to the <see cref="Dialogue"/> that the user has selected a
         /// specified <see cref="OptionSet.Option"/>.

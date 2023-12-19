@@ -105,6 +105,14 @@ namespace Yarn.Markup
         /// </summary>
         private int sourcePosition;
 
+        #region Myna
+        /// <summary>
+        /// An optional regex pattern users may define to override the default
+        /// 'EndOfCharacterMarker' pattern.
+        /// </summary>
+        private System.Text.RegularExpressions.Regex endOfCharacterMarkerOverride;
+        #endregion
+
         /// <summary>
         /// Initializes a new instance of the <see cref="LineParser"/>
         /// class.
@@ -271,7 +279,7 @@ namespace Yarn.Markup
                     stringBuilder.Append(c);
                     this.sourcePosition += 1;
                 }
-                
+
                 lastCharacter = c;
             }
 
@@ -288,9 +296,13 @@ namespace Yarn.Markup
 
             if (characterAttributeIsPresent == false)
             {
-                // Attempt to generate a character attribute from the start
-                // of the string to the first colon
-                var match = EndOfCharacterMarker.Match(this.input);
+                #region Myna
+                // Attempt to generate a character attribute via the default
+                // pattern (from the start of the string to the first colon)
+                // or a user-specified override pattern
+                var endOfCharacterMarker = endOfCharacterMarkerOverride ?? EndOfCharacterMarker;
+                var match = endOfCharacterMarker.Match(this.input);
+                #endregion Myna
 
                 if (match.Success)
                 {
@@ -317,6 +329,22 @@ namespace Yarn.Markup
                 Attributes = attributes,
             };
         }
+
+        #region Myna
+        /// <summary>
+        /// Set the value of <see cref="endOfCharacterMarkerOverride"/>
+        /// to a specified regex pattern. This pattern will be used to parse
+        /// the character name attribute from a line of text instead of the 
+        /// default pattern.
+        /// </summary>
+        /// <param name="pattern">The regex pattern to use.</param>
+        internal void SetEndOfCharacterMarker(string pattern)
+        {
+            endOfCharacterMarkerOverride = !string.IsNullOrEmpty(pattern)
+                ? new System.Text.RegularExpressions.Regex(pattern)
+                : null;
+        }
+        #endregion Myna
 
         /// <summary>
         /// Parses a marker and generates replacement text to insert into
