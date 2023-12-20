@@ -54,7 +54,7 @@ namespace Yarn
     /// created by the <see cref="Dialogue"/> during program execution.</para>
     /// </remarks>
     /// <seealso cref="Dialogue.LineHandler"/>
-#pragma warning disable CA1815
+    #pragma warning disable CA1815
     public struct Line
     {
         internal Line(string stringID) : this()
@@ -74,7 +74,7 @@ namespace Yarn
         /// </summary>
         public string[] Substitutions;
     }
-#pragma warning restore CA1815
+    #pragma warning restore CA1815
 
     /// <summary>
     /// A set of <see cref="OptionSet.Option"/>s, sent from the <see
@@ -85,7 +85,7 @@ namespace Yarn
     /// created by the <see cref="Dialogue"/> during program execution.
     /// </remarks>
     /// <seealso cref="Dialogue.OptionsHandler"/>
-#pragma warning disable CA1815
+    #pragma warning disable CA1815
     public struct OptionSet
     {
         internal OptionSet(Option[] options)
@@ -93,7 +93,7 @@ namespace Yarn
             Options = options;
         }
 
-#pragma warning disable CA1716
+        #pragma warning disable CA1716
         /// <summary>
         /// An option to be presented to the user.
         /// </summary>
@@ -159,7 +159,7 @@ namespace Yarn
             /// </remarks>
             public bool IsAvailable { get; private set; }
         }
-#pragma warning restore CA1716
+        #pragma warning restore CA1716
 
         /// <summary>
         /// Gets the <see cref="Option"/>s that should be presented to the
@@ -168,7 +168,7 @@ namespace Yarn
         /// <seealso cref="Option"/>
         public Option[] Options { get; private set; }
     }
-#pragma warning restore CA1815
+    #pragma warning restore CA1815
 
     /// <summary>
     /// A command, sent from the <see cref="Dialogue"/> to the game.
@@ -178,7 +178,7 @@ namespace Yarn
     /// created by the <see cref="Dialogue"/> during program execution.
     /// </remarks>
     /// <seealso cref="Dialogue.CommandHandler"/>    
-#pragma warning disable CA1815
+    #pragma warning disable CA1815
     public struct Command
     {
         internal Command(string text)
@@ -191,7 +191,7 @@ namespace Yarn
         /// </summary>
         public string Text { get; private set; }
     }
-#pragma warning restore CA1815
+    #pragma warning restore CA1815
 
     /// <summary>
     /// Represents a method that receives diagnostic messages and error
@@ -578,12 +578,10 @@ namespace Yarn
 
             Library.ImportLibrary(new StandardLibrary());
 
-            Library.RegisterFunction("visited", delegate (string node)
-            {
+            Library.RegisterFunction("visited", delegate(string node){
                 return IsNodeVisited(node);
             });
-            Library.RegisterFunction("visited_count", delegate (string node)
-            {
+            Library.RegisterFunction("visited_count", delegate(string node){
                 return GetNodeVisitCount(node);
             });
 
@@ -831,10 +829,6 @@ namespace Yarn
         /// <summary>
         /// Immediately stops the <see cref="Dialogue"/>.
         /// </summary>
-        /// <remarks>
-        /// The <see cref="DialogueCompleteHandler"/> will not be called if the
-        /// dialogue is ended by calling <see cref="Stop"/>.
-        /// </remarks>
         public void Stop()
         {
             if (this.vm != null)
@@ -1122,12 +1116,9 @@ namespace Yarn
                 else
                 {
                     culture = culture.Parent;
-                    if (culture != null)
-                    {
+                    if (culture != null) {
                         languageCode = culture.Name;
-                    }
-                    else
-                    {
+                    } else {
                         languageCode = this.LanguageCode;
                     }
                 }
@@ -1186,22 +1177,29 @@ namespace Yarn
         // The standard, built-in library of functions and operators.
         internal class StandardLibrary : Library
         {
+            private static System.Random Random = new Random();
+
             public StandardLibrary()
             {
                 #region Operators
 
                 // Register the in-built conversion functions
-                this.RegisterFunction("string", delegate (object v)
+                this.RegisterFunction("string", delegate(object v)
                 {
                     return Convert.ToString(v);
                 });
 
-                this.RegisterFunction("number", delegate (object v)
+                this.RegisterFunction("number", delegate(object v)
                 {
                     return Convert.ToSingle(v);
                 });
 
-                this.RegisterFunction("bool", delegate (object v)
+                this.RegisterFunction("format_invariant", delegate (float v)
+                {
+                    return v.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                });
+
+                this.RegisterFunction("bool", delegate(object v)
                 {
                     return Convert.ToBoolean(v);
                 });
@@ -1210,6 +1208,81 @@ namespace Yarn
                 this.RegisterMethods(BuiltinTypes.Number);
                 this.RegisterMethods(BuiltinTypes.String);
                 this.RegisterMethods(BuiltinTypes.Boolean);
+
+                #pragma warning disable CA5394 // System.Random is not cryptographically secure
+
+                // Register the built-in functions.
+                this.RegisterFunction("random", delegate ()
+                {
+                    return Random.NextDouble();
+                });
+
+                this.RegisterFunction("random_range", delegate (float minInclusive, float maxInclusive)
+                {
+                    var t = Random.NextDouble();
+                    return minInclusive + t * (maxInclusive - minInclusive);
+                });
+
+                this.RegisterFunction("dice", delegate (int sides)
+                {
+                    return Random.Next(1, sides + 1);
+                });
+
+                #pragma warning restore CA5394
+
+                this.RegisterFunction("round", delegate (float num)
+                {
+                    return (float)Math.Round(num, 0);
+                });
+
+                this.RegisterFunction("round_places", delegate (float num, int places)
+                {
+                    return (float)Math.Round(num, places);
+                });
+
+                this.RegisterFunction("floor", delegate (float num)
+                {
+                    return (float)(int)Math.Floor(num);
+                });
+
+                this.RegisterFunction("ceil", delegate (float num)
+                {
+                    return (float)(int)Math.Ceiling(num);
+                });
+
+                this.RegisterFunction("inc", delegate (float num)
+                {
+                    if ((num - Math.Truncate(num)) != 0)
+                    {
+                        return Math.Ceiling(num);
+                    }
+                    else
+                    {
+                        return (int)(num + 1);
+                    }
+                });
+
+                this.RegisterFunction("dec", delegate (float num)
+                {
+                    if ((num - Math.Truncate(num)) != 0)
+                    {
+                        return Math.Floor(num);
+                    }
+                    else
+                    {
+                        return (int)(num - 1);
+                    }
+                });
+
+                this.RegisterFunction("decimal", delegate (float num)
+                {
+                    return num - Math.Truncate(num);
+                });
+
+                this.RegisterFunction("int", delegate (float num)
+                {
+                    return Math.Truncate(num);
+                });
 
                 #endregion Operators
             }
